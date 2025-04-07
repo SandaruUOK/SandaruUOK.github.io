@@ -130,52 +130,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form handling with validation
     const contactForm = document.querySelector('.contact-form');
     
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Simple front-end validation
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const messageInput = document.getElementById('message');
-            
-            let isValid = true;
-            
-            if (nameInput.value.trim() === '') {
-                highlightInvalid(nameInput);
-                isValid = false;
-            } else {
-                removeHighlight(nameInput);
-            }
-            
-            if (emailInput.value.trim() === '' || !isValidEmail(emailInput.value)) {
-                highlightInvalid(emailInput);
-                isValid = false;
-            } else {
-                removeHighlight(emailInput);
-            }
-            
-            if (messageInput.value.trim() === '') {
-                highlightInvalid(messageInput);
-                isValid = false;
-            } else {
-                removeHighlight(messageInput);
-            }
-            
+   if (contactForm) {const contactForm = document.querySelector('.contact-form');
+        const submitBtn = contactForm.querySelector('.send-btn');
+        
+        contactForm.addEventListener('submit', (event) => {
+            event.preventDefault();  // Prevent default form submission
+        
+            const isValid = contactForm.checkValidity();  // Validate the form
             if (isValid) {
                 // Simulate form submission
-                const submitBtn = contactForm.querySelector('.send-btn');
                 const originalText = submitBtn.innerHTML;
                 
                 submitBtn.innerHTML = '<span>Sending...</span> <i class="fas fa-spinner fa-spin"></i>';
                 submitBtn.disabled = true;
-            
                 
-                // Simulate API call/form processing
+                // Submit the form
+                contactForm.submit();
+                
                 setTimeout(() => {
-                    contactForm.reset();
                     submitBtn.innerHTML = '<span>Message Sent!</span> <i class="fas fa-check"></i>';
-                    
                     setTimeout(() => {
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
