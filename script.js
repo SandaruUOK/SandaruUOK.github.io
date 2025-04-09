@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form handling with validation
     const contactForm = document.querySelector('.contact-form');
     
-    if (contactForm) {const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
         const submitBtn = contactForm.querySelector('.send-btn');
         
         contactForm.addEventListener('submit', (event) => {
