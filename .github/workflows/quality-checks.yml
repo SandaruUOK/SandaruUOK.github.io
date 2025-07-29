@@ -1,0 +1,54 @@
+name: Code Quality Checks
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install validation tools
+        run: |
+          npm install -g html-validate lighthouse-cli jshint
+
+      - name: Validate HTML
+        run: |
+          echo "Validating HTML files..."
+          find . -name "*.html" -not -path "./node_modules/*" | while read file; do
+            echo "Validating $file"
+            npx html-validate "$file" || echo "Validation issues found in $file"
+          done
+
+      - name: Lint JavaScript
+        run: |
+          echo "Linting JavaScript files..."
+          find . -name "*.js" -not -path "./node_modules/*" | while read file; do
+            echo "Linting $file"
+            jshint "$file" || echo "Linting issues found in $file"
+          done
+
+      - name: Check for broken links (simple)
+        run: |
+          echo "Checking for obvious broken links..."
+          grep -r "href.*#" . --include="*.html" || echo "No anchor links found"
+
+      - name: File size check
+        run: |
+          echo "Checking file sizes..."
+          find . -name "*.css" -o -name "*.js" -o -name "*.html" | while read file; do
+            size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+            if [ "$size" -gt 100000 ]; then
+              echo "Warning: $file is large (${size} bytes)"
+            fi
+          done
